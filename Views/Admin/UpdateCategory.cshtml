@@ -1,0 +1,67 @@
+﻿@model AdminPanelViewModel
+
+<form method="post" asp-action="UpdateCategory">
+    <table style="border-collapse:separate;border-spacing:0 8px">
+        <input type="hidden" name="Id" value="@Model.Category.Id" />
+        <tr class="inputbox">
+            <td>
+                <label>Kategori Adı</label>
+            </td>
+            <td>
+                <input name="Name" value="@Model.Category.Name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Alt Kategoriler</label>
+            </td>
+            <td>
+                @foreach(Subcategory s in Model.Subcategories)
+                {
+                    <input style="margin-left: 5vw" type="checkbox" name="subcategoryIds" value="@s.Id" @(Model.Category.Subcategories.Contains(s) ? "checked" : ""))> @s.Name
+                    <br>
+                }
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td colspan="2" style="text-align:center">
+                <button type="submit">Kaydet</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var categorySubcategoriesData = @Html.Raw(Json.Serialize(Model.CategorySubcategories));
+    var subcategoriesData = @Html.Raw(Json.Serialize(Model.Subcategories));
+
+    $(document).ready(function () {
+        var categoryCmb = $("#categoryCmb");
+        var subcategoryCmb = $("#subcategoryCmb");
+        updateSubcategories(categoryCmb.val());
+        categoryCmb.change(function () {
+            var selectedCategoryId = parseInt(categoryCmb.val());
+            updateSubcategories(selectedCategoryId);
+        });
+    });
+
+
+    function updateSubcategories(selectedCategoryId) {
+        var subcategoryCmb = $("#subcategoryCmb");
+        subcategoryCmb.empty();
+        var subcategoryIds = categorySubcategoriesData[selectedCategoryId];
+        if (subcategoryIds && subcategoryIds.length > 0) {
+            $.each(subcategoryIds, function (index, subcategoryId) {
+                var subcategory = subcategoriesData.find(function (s) {
+                    return s.id === subcategoryId;
+                });
+                subcategoryCmb.append("<option value='" + subcategory.id + "'>" + subcategory.name + "</option>");
+            });
+        }
+
+        else {
+            subcategoryCmb.append("<option value=''>-</option>");
+        }
+    }
+</script>

@@ -1,0 +1,335 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using ETicaret.Repositories;
+@using Microsoft.AspNetCore.Identity;
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Http;
+@model SearchViewModel
+@inject SignInManager<AppUser> SignInManager
+@inject IHttpContextAccessor Accessor
+@inject IViewLocalizer ViewLocalizer
+@{
+    ViewData["Title"] = Model.MenuName +" - bzShop";
+    var userSigned = SignInManager.IsSignedIn(User);
+    int userId = 0;
+    if (userSigned)
+        userId = Int32.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+}
+
+
+<section id="aa-product-category">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 col-md-9 col-sm-8 col-md-push-3">
+                <div class="aa-product-catg-content">
+                    <div class="aa-product-catg-head">
+                        <div class="aa-product-catg-head-left">
+                            <label for="">@ViewLocalizer["Sort by"]</label>
+                            <select name="sortOrder" id="sortOrder">
+                                <option value="1">@ViewLocalizer["Name"]</option>
+                                <option value="2">@ViewLocalizer["Best Rating"]</option>
+                                <option value="3">@ViewLocalizer["Number of Reviews"]</option>
+                                <option value="4">@ViewLocalizer["Date of Add"]</option>
+                                <option value="5">@ViewLocalizer["Highest Price"]</option>
+                                <option value="6">@ViewLocalizer["Lowest Price"]</option>
+                            </select>
+                            <label for="">@ViewLocalizer["Show"]</label>
+                            <select name="sortNumber" id="sortNumber">
+                                <option value="12">12</option>
+                                <option value="24">24</option>
+                                <option value="36">36</option>
+                            </select>
+                        </div>
+                        <div class="aa-product-catg-head-right">
+                            <a id="grid-catg" href="#"><span class="fa fa-th"></span></a>
+                            <a id="list-catg" href="#"><span class="fa fa-list"></span></a>
+                        </div>
+                    </div>
+                    <div class="aa-product-catg-body">
+                        <ul class="aa-product-catg">
+                            <!-- start single product item -->
+                            @foreach (Product p in Model.Products)
+                            {
+                                <li>
+                                    <figure>
+                                        <a class="aa-product-img" href="@Url.Action("Detail","Product",new {productId=p.Id})"><img src="/img/@p.ImageUrl" alt="polo shirt img"></a>
+                                        <a class="aa-add-card-btn" asp-action="Add" asp-controller="Cart" asp-route-productId="@p.Id"><span class="fa fa-shopping-cart"></span>@ViewLocalizer["Add to Cart"]</a>
+                                        <figcaption>
+                                            <h4 class="aa-product-title"><a href="@Url.Action("Detail","Product",new {productId=p.Id})">@p.Name</a></h4>
+                                            <span>
+                                                @for (int i = 0; i < ((p.Comments.Count() != 0) ? p.Comments.Sum(c => c.Rating) / p.Comments.Count() : 0); i++)
+                                                {
+                                                    <span class="fa fa-star"></span>
+                                                }
+                                                @for (int i = 0; i < 5 - ((p.Comments.Count() != 0) ? p.Comments.Sum(c => c.Rating) / p.Comments.Count() : 0); i++)
+                                                {
+                                                    <span class="fa fa-star-o"></span>
+                                                }
+                                                (@p.Comments.Count())
+                                            </span><br>
+                                            <span class="aa-product-price">@Accessor.HttpContext.Session.GetString("symbol")@((int)((float)p.Price*float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))</span>
+                                            <p class="aa-product-descrip">@p.Description</p>
+                                        </figcaption>
+                                    </figure>
+                                    <div class="aa-product-hvr-content">
+                                        @if (Model.Wishlists != null)
+                                        {
+                                            @if (Model.Wishlists.Any(w => w.ProductId == p.Id))
+                                            {
+                                                <a asp-action="Remove" asp-controller="Wishlist" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" asp-route-productId="@p.Id" data-toggle="tooltip" data-placement="top" title="@ViewLocalizer["Delete from Wishlist"]"><span class="fa fa-heart"></span></a>
+                                            }
+                                            else
+                                            {
+                                                <a asp-action="Add" asp-controller="Wishlist" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" asp-route-productId="@p.Id" data-toggle="tooltip" data-placement="top" title="@ViewLocalizer["Add to Wishlist"]"><span class="fa fa-heart-o"></span></a>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Add" asp-controller="Wishlist" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" asp-route-productId="@p.Id" data-toggle="tooltip" data-placement="top" title="@ViewLocalizer["Add to Wishlist"]"><span class="fa fa-heart-o"></span></a>
+                                        }
+                                        <a href="javascript:;" class="compare" data-toggle="tooltip" data-placement="top" title="@ViewLocalizer["Compare"]" data-productid="@p.Id"><span class="fa fa-exchange"></span></a>
+                                        <a href="javascript:;" class="quickview" data-toggle2="tooltip" data-placement="top" title="@ViewLocalizer["Quick View"]" data-productid="@p.Id" data-toggle="modal" data-target="#quick-view-modal"><span class="fa fa-search"></span></a>
+                                    </div>
+                                    @if(p.Stock == 0)
+                                    {
+                                        <span class="aa-badge aa-sold-out">@ViewLocalizer["Sold Out!"]</span>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                        <!-- quick view modal -->
+                        <div class="modal fade" id="quick-view-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <div class="row">
+                                            <!-- Modal view slider -->
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="aa-product-view-slider">
+                                                    <div class="simpleLens-gallery-container" id="demo-1">
+                                                        <div class="simpleLens-container">
+                                                            <div class="simpleLens-big-image-container">
+                                                                <a class="simpleLens-lens-image" data-lens-image="/img/view-slider/large/polo-shirt-1.png">
+                                                                    <img src="/img/view-slider/medium/polo-shirt-1.png" class="simpleLens-big-image">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="simpleLens-thumbnails-container">
+                                                            <a href="#" class="simpleLens-thumbnail-wrapper"
+                                                               data-lens-image="/img/view-slider/large/polo-shirt-1.png"
+                                                               data-big-image="/img/view-slider/medium/polo-shirt-1.png">
+                                                                <img src="/img/view-slider/thumbnail/polo-shirt-1.png">
+                                                            </a>
+                                                            <a href="#" class="simpleLens-thumbnail-wrapper"
+                                                               data-lens-image="/img/view-slider/large/polo-shirt-3.png"
+                                                               data-big-image="/img/view-slider/medium/polo-shirt-3.png">
+                                                                <img src="/img/view-slider/thumbnail/polo-shirt-3.png">
+                                                            </a>
+
+                                                            <a href="#" class="simpleLens-thumbnail-wrapper"
+                                                               data-lens-image="/img/view-slider/large/polo-shirt-4.png"
+                                                               data-big-image="/img/view-slider/medium/polo-shirt-4.png">
+                                                                <img src="/img/view-slider/thumbnail/polo-shirt-4.png">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- Modal view content -->
+                                            <div class="col-md-6 col-sm-6 col-xs-12">
+                                                <div class="aa-product-view-content">
+                                                    <h3 data-product="name"></h3>
+                                                    <div class="aa-price-block">
+                                                        @Accessor.HttpContext.Session.GetString("symbol")<span class="aa-product-view-price" data-product="price"></span>
+                                                        <p class="aa-product-avilability">@ViewLocalizer["Stock"]: <span data-product="stock"></span></p>
+                                                    </div>
+                                                    <p data-product="description"></p>
+                                                    <h4>Size</h4>
+                                                    <div class="aa-prod-view-size">
+                                                        <a href="#">S</a>
+                                                        <a href="#">M</a>
+                                                        <a href="#">L</a>
+                                                        <a href="#">XL</a>
+                                                    </div>
+                                                    <div class="aa-prod-quantity">
+                                                        <form action="">
+                                                            <select name="" id="" disabled>
+                                                                <option value="0">1</option>
+                                                                <option value="1">2</option>
+                                                                <option value="2">3</option>
+                                                                <option value="3">4</option>
+                                                                <option value="4">5</option>
+                                                                <option value="5">6</option>
+                                                            </select>
+                                                        </form>
+                                                        <p class="aa-prod-category">
+                                                            Category: <a href="#">Polo T-Shirt</a>
+                                                        </p>
+                                                    </div>
+                                                    <div class="aa-prod-view-bottom">
+                                                        <a class="aa-add-to-cart-btn" data-product="cartbutton"><span class="fa fa-shopping-cart"></span>@ViewLocalizer["Add to Cart"]</a>
+                                                        <a class="aa-add-to-cart-btn" data-product="detailbutton">@ViewLocalizer["View Details"]</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aa-product-catg-pagination">
+                        <nav>
+                            <ul class="pagination">
+                                @if(ViewBag.CurrentPage!=1)
+                                {
+                                    <li>
+                                        <a class="pagination-link" href="@Url.Action("Search",new{searchTerm=Model.SearchTerm,categoryId=Model.CategoryId,subcategoryId=Model.SubcategoryId,sortOrder=ViewBag.selectedSortOrder,sortNumber=ViewBag.selectedSortNumber,targetPage=ViewBag.CurrentPage-1})" aria-label="Next">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                }  
+                                @for(int i=1;i<=ViewBag.MaxPage;i++)
+                                {
+                                    if(i==ViewBag.CurrentPage)
+                                    {
+                                        <li><a href="#" class="current-page">@i</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li><a class="pagination-link" href="@Url.Action("Search",new{searchTerm=Model.SearchTerm,categoryId=Model.CategoryId,subcategoryId=Model.SubcategoryId,sortOrder=ViewBag.selectedSortOrder,sortNumber=ViewBag.selectedSortNumber,targetPage=i})">@i</a></li>
+                                    }
+                                }
+                                @if(ViewBag.CurrentPage!=ViewBag.MaxPage)
+                                {
+                                    <li>
+                                    <a class="pagination-link" href="@Url.Action("Search",new{searchTerm=Model.SearchTerm,categoryId=Model.CategoryId,subcategoryId=Model.SubcategoryId,sortOrder=ViewBag.selectedSortOrder,sortNumber=ViewBag.selectedSortNumber,targetPage=ViewBag.CurrentPage+1})" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                                }                              
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-4 col-md-pull-9">
+                <aside class="aa-sidebar">
+                    <!-- single sidebar -->
+                    <div class="aa-sidebar-widget">
+                        <h3>@ViewLocalizer["Categories"]</h3>
+                        <ul class="aa-catg-nav">
+                            @foreach(Category c in Model.Categories)
+                            {
+                                <li><a asp-route-categoryId="@c.Id">@c.Name</a></li>                                
+                            }
+                        </ul>
+                    </div>
+                    <div class="aa-sidebar-widget">
+                        <h3>@ViewLocalizer["Recently Views"]</h3>
+                        <div class="aa-recently-views">
+                            <ul>
+                                @foreach(Product p in Model.RecentlyViewedProducts)
+                                {
+                                    <li>
+                                        <a asp-action="Detail" asp-route-productId="@p.Id" class="aa-cartbox-img"><img alt="img" src="/img/woman-small-2.jpg"></a>
+                                        <div class="aa-cartbox-info">
+                                            <h4><a asp-action="Detail" asp-route-productId="@p.Id">@p.Name</a></h4>
+                                            <p>@Accessor.HttpContext.Session.GetString("symbol")@((int)(p.Price * float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))</p>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- single sidebar -->
+                </aside>
+            </div>
+
+        </div>
+    </div>
+</section>
+<style>
+    .pagination-link{
+        text-decoration: none;
+        color: black; /* Sayfalama linkleri varsayılan renk */ 
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .pagination-link:hover{
+            background-color: #f2f2f2;
+    }
+
+    .current-page !important{
+        color: black; /* Mevcut sayfa linkinin rengi */
+        background-color: #ddd; /* Mevcut sayfa linkinin arka plan rengi */
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () 
+    {
+        $("#sortOrder option[value='"+@(ViewBag.selectedSortOrder==null?1:ViewBag.selectedSortOrder)+"']").prop('selected', true);
+        $("#sortNumber option[value='" + @(ViewBag.selectedSortNumber == null ? 1 : ViewBag.selectedSortNumber)+"']").prop('selected', true);
+        function updateSearch(sortOrder,sortNumber)
+        {
+            var categoryId = @Model.CategoryId;
+            var subcategoryId = @((Model.SubcategoryId != null) ? Model.SubcategoryId : "null");
+            var searchTerm = "@((Model.SearchTerm != null) ? Model.SearchTerm : "null")";
+            $.ajax({
+                url: '/Product/SearchFilter',
+                type: 'POST',
+                data: { searchTerm:searchTerm, categoryId:categoryId,subcategoryId:subcategoryId,sortOrder: sortOrder,sortNumber: sortNumber,targetPage:1},
+                success: function (data) {
+                    var form = $('<form action="@Url.Action("Search", "Product")">' +
+                        '<input type="hidden" name="searchTerm" value="' + data.searchTerm + '" />' +
+                        '<input type="hidden" name="categoryId" value="' + data.categoryId + '" />' +
+                        '<input type="hidden" name="subcategoryId" value="' + data.subcategoryId + '" />' +
+                        '<input type="hidden" name="sortOrder" value="' + data.sortOrder + '" />' +
+                        '<input type="hidden" name="sortNumber" value="' + data.sortNumber + '" />' +
+                        '<input type="hidden" name="targetPage" value="' + data.targetPage + '" />' +
+                        '</form>');
+                    $('body').append(form);
+                    form.submit();
+                }
+            });
+        }
+
+        $("select").change(function()
+        {
+            updateSearch($("#sortOrder").val(),$("#sortNumber").val());
+        });
+
+        $(".quickview").on('click',function()
+        {
+            $.ajax({
+                url:'/Product/GetById',
+                type:'POST',
+                data:{productId:$(this).data("productid")},
+                success:function(result){
+                    const obj = JSON.parse(result);
+                    $('[data-product="name"]').text(obj.Name);
+                    $('[data-product="price"]').text(obj.Price);
+                    $('[data-product="stock"]').text(obj.Stock);
+                    $('[data-product="description"]').text(obj.Description);
+                    $('[data-product="detailbutton"]').attr("href", "/Product/Detail/?productId=" + obj.Id);
+                    $('[data-product="cartbutton"]').attr("href", "/Cart/Add/?productId=" + obj.Id);
+                }
+            });
+        });
+
+        $(".compare").on('click', function () {
+            $.ajax({
+                url: '/Product/SetCompare',
+                type: 'POST',
+                data: { productId: $(this).data("productid") },
+                success: function (result) {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>

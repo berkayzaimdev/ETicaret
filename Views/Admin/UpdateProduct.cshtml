@@ -1,0 +1,126 @@
+﻿@model AdminPanelViewModel
+
+<form method="post" asp-action="UpdateProduct">
+    <table style="border-collapse:separate;border-spacing:0 8px">
+        <input type="hidden" name="Id" value="@Model.Product.Id" />
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Adı</label>
+            </td>
+            <td>
+                <input name="Name" value="@Model.Product.Name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Fiyatı</label>
+            </td>
+            <td>
+                <input name="Price" value="@Model.Product.Price" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; "/>
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Stok Miktarı</label>
+            </td>
+            <td>
+                <input name="Stock" value="@Model.Product.Stock" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; "/>
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Kategorisi</label>
+            </td>
+            <td>
+                <select name="categoryId" id="categoryCmb" class="sl" style="margin-left:5vw; width: 10vw; text-align: center;">
+                    @foreach (Category c in Model.Categories)
+                    {
+                        <option value="@c.Id" selected="@(Model.Product.CategoryId == c.Id ? "selected" : null)">@c.Name</option>
+                    }
+                </select>
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Alt Kategorisi</label>
+            </td>
+            <td>
+                <select name="subcategoryId" id="subcategoryCmb" class="sl" style="margin-left: 5vw; width: 10vw; text-align: center;">
+                </select>
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Renkleri</label>
+            </td>
+            <td>
+                <select name="Color" id="cmb" class="sl" style=" margin-left: 5vw; width: 10vw; text-align: center;">
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Açıklaması</label>
+            </td>
+            <td>
+                <textarea name="Description" class="sl" style="resize:none;margin-left: 5vw; width: 10vw; ">@Model.Product.Description</textarea>
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td>
+                <label>Ürün Resmi</label>
+            </td>
+            <td>
+                <input name="Image" class="sl" style=" margin-left: 5vw; width: 10vw; text-align: center;" type="file">
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td colspan="2" style="text-align:center">
+                <button type="submit">Kaydet</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var categorySubcategoriesData = @Html.Raw(Json.Serialize(Model.CategorySubcategories));
+    var subcategoriesData = @Html.Raw(Json.Serialize(Model.Subcategories));
+
+    $(document).ready(function () 
+    {
+        var categoryCmb = $("#categoryCmb");
+        var subcategoryCmb = $("#subcategoryCmb");
+        updateSubcategories(categoryCmb.val());
+        categoryCmb.change(function () 
+        {
+            var selectedCategoryId = parseInt(categoryCmb.val());
+            updateSubcategories(selectedCategoryId);
+        });
+    });
+
+
+    function updateSubcategories(selectedCategoryId) 
+    {
+        var subcategoryCmb = $("#subcategoryCmb");
+        subcategoryCmb.empty();
+        var subcategoryIds = categorySubcategoriesData[selectedCategoryId];
+        if (subcategoryIds && subcategoryIds.length > 0) 
+        {
+            $.each(subcategoryIds, function (index, subcategoryId) 
+            {
+                var subcategory = subcategoriesData.find(function (s) 
+                {
+                    return s.id === subcategoryId;
+                });
+                //var selected = subcategory.id==@Model.Product.SubcategoryId?"selected":"null";
+                //subcategoryCmb.append("<option value='" + subcategory.id + "' selected='"+selected+"'>" + subcategory.name + "</option>");
+                subcategoryCmb.append("<option value='" + subcategory.id + "'>" + subcategory.name + "</option>");
+            });
+        }
+
+        else 
+        {
+            subcategoryCmb.append("<option value=''>-</option>");
+        }
+    }
+</script>

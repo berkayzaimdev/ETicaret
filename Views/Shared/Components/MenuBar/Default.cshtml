@@ -1,0 +1,27 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer ViewLocalizer
+@model MenuViewModel
+
+<ul class="nav navbar-nav">
+    <li><a asp-controller="Home" asp-action="Index">@ViewLocalizer["Home"]</a></li>
+    @foreach (Category c in Model.Categories)
+    {
+        <li>
+            @if(c.Subcategories.Count()>0)
+            {
+                <a href="@Url.Action("Search","Product",new{categoryId=c.Id})">@c.Name<span class="caret"></span></a>
+                <ul class="dropdown-menu">                
+                @foreach(Subcategory s in c.Subcategories)
+                {
+                        <li><a href="@Url.Action("Search","Product",new{categoryId=c.Id,subcategoryId=s.Id})">@s.Name</a></li>
+                }
+                </ul>
+            }
+            else
+            {
+                <a href="@Url.Action("Search","Product",new{categoryId=c.Id})">@c.Name</a>
+            }
+        </li>
+    }
+    <li><a asp-controller="Home" asp-action="Contact">@ViewLocalizer["Contact"]</a></li>
+</ul>

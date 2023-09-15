@@ -1,0 +1,557 @@
+﻿@model AdminPanelViewModel
+
+<a data-toggle="modal" data-target="#test" class="test">asdasdasd</a>
+<div class="modal fade" tabindex="-1" role="dialog" id="test">
+    <div class="modal-dialog" role="document">
+        <div class="model-content">
+            <div class="model-header">
+                <h5 class="modal-title">Test 1</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="">
+                <div class="model-body">
+                    <div class="form-group">
+                        <label>testt1</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>testt2</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>testt3</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>testt4</label>
+                        <input type="text" class="form-control" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="aa-product-details-bottom">
+    <ul class="nav nav-tabs" id="myTab2">
+        <li><a href="#product" data-toggle="tab">Ürünler</a></li>
+        <li><a href="#category" data-toggle="tab">Kategoriler</a></li>
+        <li><a href="#subcategory" data-toggle="tab">Alt Kategoriler</a></li>
+        <li><a href="#coupon" data-toggle="tab">Kuponlar</a></li>
+        <li><a href="#shipper" data-toggle="tab">Kargo Firmaları</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <!--  -->
+        <div class="tab-pane fade in active" id="product">
+            <table style="border-collapse:separate;border-spacing:10px">
+                <tr>
+                    <td>
+                        <form method="post" asp-action="CreateProduct">
+                            <table style="border-collapse:separate;border-spacing:0 8px">
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Adı</label>
+                                    </td>
+                                    <td>
+                                        <input name="Name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Fiyatı</label>
+                                    </td>
+                                    <td>
+                                        <input name="Price" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw;" />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Stok Miktarı</label>
+                                    </td>
+                                    <td>
+                                        <input name="Stock" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw;" />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Kategorisi</label>
+                                    </td>
+                                    <td>
+                                        <select name="categoryId" id="categoryCmb" class="sl" style="margin-left:5vw; width: 10vw; text-align: center;">
+                                            @foreach (Category c in Model.Categories)
+                                            {
+                                                <option value="@c.Id">@c.Name</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Alt Kategorisi</label>
+                                    </td>
+                                    <td>
+                                        <select name="subcategoryId" id="subcategoryCmb" class="sl" style="margin-left: 5vw; width: 10vw; text-align: center;">
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Renkleri</label>
+                                    </td>
+                                    <td>
+                                        <select name="Color" id="cmb" class="sl" style=" margin-left: 5vw; width: 10vw; text-align: center;">
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Açıklaması</label>
+                                    </td>
+                                    <td>
+                                        <textarea name="Description" class="sl" style="resize:none;margin-left: 5vw; width: 10vw; "></textarea>
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Ürün Resmi</label>
+                                    </td>
+                                    <td>
+                                        <input name="Image" class="sl" style=" margin-left: 5vw; width: 10vw; text-align: center;" type="file">
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td colspan="2" style="text-align:center">
+                                        <button type="submit">Kaydet</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Ürün Adı</td>
+                                        <td>Fiyat</td>
+                                        <td>Stok</td>
+                                        <td>Kategori</td>
+                                        <td>Alt Kategori</td>
+                                        <td>Renk Seçenekleri</td>
+                                        <td>Açıklama</td>
+                                        <td>Sil</td>
+                                        <td>Güncelle</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Product p in Model.Products)
+                                    {
+                                        <tr>
+                                            <td>@p.Name</td>
+                                            <td>@p.Price</td>
+                                            <td>@p.Stock</td>
+                                            <td>@Model.Categories.FirstOrDefault(c => c.Id == p.CategoryId).Name</td>
+                                            <td>@((p.SubcategoryId == null) ? "-" : Model.Subcategories.FirstOrDefault(s => s.Id == p.SubcategoryId).Name)</td>
+                                            <td>-</td>
+                                            <td>@p.Description</td>
+                                            <td style="text-align:center">
+                                                <form method="post" asp-action="RemoveProduct" asp-route-Id="@p.Id">
+                                                    <button type="submit"><i class="fa fa-times"></i></button>
+                                                </form>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="get" asp-action="UpdateProduct" asp-route-Id="@p.Id">
+                                                    <button type="submit"><i class="fa fa-pencil"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane fade " id="category">
+            <table style="border-collapse:separate;border-spacing:10px">
+                <tr>
+                    <td>
+                        <form method="post" asp-action="CreateCategory">
+                            <table style="border-collapse:separate;border-spacing:0 8px">
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Kategori Adı</label>
+                                    </td>
+                                    <td>
+                                        <input name="Name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td colspan="2" style="text-align:center">
+                                        <button type="submit">Kaydet</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Kategori Adı</td>
+                                        <td>Alt Kategorileri</td>
+                                        <td>Sil</td>
+                                        <td>Güncelle</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Category c in Model.Categories)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @c.Name
+                                            </td>
+                                            <td>
+                                                @if (c.Subcategories.Count > 0)
+                                                {
+                                                    <select>
+                                                        @foreach (Subcategory s in c.Subcategories)
+                                                        {
+
+                                                            <option>@s.Name</option>
+
+                                                        }
+                                                    </select>
+                                                }
+                                                else
+                                                {
+                                                    <text>-</text>
+                                                }
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="post" asp-action="RemoveCategory" asp-route-Id="@c.Id">
+                                                    <button type="submit"><i class="fa fa-times"></i></button>
+                                                </form>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="get" asp-action="UpdateCategory" asp-route-Id="@c.Id">
+                                                    <button type="submit"><i class="fa fa-pencil"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane fade " id="subcategory">
+            <table style="border-collapse:separate;border-spacing:10px">
+                <tr>
+                    <td>
+                        <form method="post" asp-action="CreateSubcategory">
+                            <table style="border-collapse:separate;border-spacing:0 8px">
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Alt Kategori Adı</label>
+                                    </td>
+                                    <td>
+                                        <input name="Name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Üst Kategorisi</label>
+                                    </td>
+                                    <td>
+                                        <select name="CategoryId" class="inp-f0" style="margin-left: 5vw;width: 10vw;text-align:center">
+                                            @foreach (Category c in Model.Categories)
+                                            {
+                                                <option value="@c.Id">@c.Name</option>
+                                            }
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td colspan="2" style="text-align:center">
+                                        <button type="submit">Kaydet</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Alt Kategori Adı</td>
+                                        <td>Üst Kategorisi</td>
+                                        <td>Sil</td>
+                                        <td>Güncelle</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Subcategory s in Model.Subcategories)
+                                    {
+                                        <tr>
+                                            <td>@s.Name</td>
+                                            <td>@s.Category.Name</td>
+                                            <td style="text-align:center">
+                                                <form method="post" asp-action="RemoveSubcategory" asp-route-Id="@s.Id">
+                                                    <button type="submit"><i class="fa fa-times"></i></button>
+                                                </form>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="get" asp-action="UpdateSubcategory" asp-route-Id="@s.Id">
+                                                    <button type="submit"><i class="fa fa-pencil"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane fade " id="coupon">
+            <table style="border-collapse:separate;border-spacing:10px">
+                <tr>
+                    <td>
+                        <form method="post" asp-action="CreateCoupon">
+                            <table style="border-collapse:separate;border-spacing:0 8px">
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Kupon Kodu</label>
+                                    </td>
+                                    <td>
+                                        <input name="code" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Kupon Açıklaması</label>
+                                    </td>
+                                    <td>
+                                        <input name="description" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>İndirim</label>
+                                    </td>
+                                    <td>
+                                        <input name="percentage" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td colspan="2" style="text-align:center">
+                                        <button type="submit">Kaydet</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Kupon Kodu</td>
+                                        <td>Kupon Açıklaması</td>
+                                        <td>İndirim</td>
+                                        <td>Sil</td>
+                                        <td>Güncelle</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Coupon c in Model.Coupons)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @c.Code
+                                            </td>
+                                            <td>
+                                                @c.Description
+                                            </td>
+                                            <td>
+                                                %@c.Percentage
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="post" asp-action="RemoveCoupon" asp-route-Id="@c.Id">
+                                                    <button type="submit"><i class="fa fa-times"></i></button>
+                                                </form>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="get" asp-action="UpdateCoupon" asp-route-Id="@c.Id">
+                                                    <button type="submit"><i class="fa fa-pencil"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="tab-pane fade " id="shipper">
+            <table style="border-collapse:separate;border-spacing:10px">
+                <tr>
+                    <td>
+                        <form method="post" asp-action="CreateShipper">
+                            <table style="border-collapse:separate;border-spacing:0 8px">
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Firma Adı</label>
+                                    </td>
+                                    <td>
+                                        <input name="name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td>
+                                        <label>Firma Açıklaması</label>
+                                    </td>
+                                    <td>
+                                        <input name="description" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                                    </td>
+                                </tr>
+                                <tr class="inputbox">
+                                    <td colspan="2" style="text-align:center">
+                                        <button type="submit">Kaydet</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </form>
+                    </td>
+                    <td>
+                        <div class="table-container">
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>Firma Adı</td>
+                                        <td>Firma Açıklaması</td>
+                                        <td>Sil</td>
+                                        <td>Güncelle</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Shipper s in Model.Shippers)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @s.Name
+                                            </td>
+                                            <td>
+                                                @s.Description
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="post" asp-action="RemoveShipper" asp-route-Id="@s.Id">
+                                                    <button type="submit"><i class="fa fa-times"></i></button>
+                                                </form>
+                                            </td>
+                                            <td style="text-align:center">
+                                                <form method="get" asp-action="UpdateShipper" asp-route-Id="@s.Id">
+                                                    <button type="submit"><i class="fa fa-pencil"></i></button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-container tbody tr:hover {
+        background-color: #cccccc;
+    }
+
+    .topbutton {
+        width: 4vw;
+        background-color: #f2f2f2;
+        border: 1px solid #e6e6e6;
+        border-radius: 5px;
+        list-style: none;
+    }
+
+    .inputbox {
+        background-color: #f2f2f2;
+        border: 1px solid #e6e6e6;
+        border-radius: 5px;
+        box-shadow: 0 0 5px #e6e6e6;
+    }
+
+    td {
+        margin-right: 10px;
+    }
+
+    thead {
+        background-color: black;
+        color: white;
+    }
+
+    .scrollable-listbox {
+        height: 150px;
+        overflow-y: auto;
+    }
+</style>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function ()
+    {
+        console.log("test");
+        var categoryCmb = $("#categoryCmb");
+        var subcategoryCmb = $("#subcategoryCmb");
+        updateSubcategories(categoryCmb.val());
+        categoryCmb.change(function () 
+        {
+            var selectedCategoryId = parseInt(categoryCmb.val());
+            updateSubcategories(selectedCategoryId);
+        });
+    });
+
+
+    function updateSubcategories(selectedCategoryId) 
+    {
+        $.ajax({
+            url: '/Admin/GetSubcategories',
+            type: 'POST',
+            data: { categoryId: selectedCategoryId},
+            success: function (result) {
+                var subcategoryCmb = $("#subcategoryCmb");
+                subcategoryCmb.empty();
+                console.log(result);
+                if (result.length > 0) 
+                {
+                    result.forEach(x => subcategoryCmb.append("<option value=" + x.id + ">" + x.name + "</option>"));
+
+                }
+                else 
+                {
+                    subcategoryCmb.append("<option>-</option>");
+                }
+            }
+        });
+    }
+</script>

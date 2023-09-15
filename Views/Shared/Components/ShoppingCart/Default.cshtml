@@ -1,0 +1,45 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Identity;
+@inject IViewLocalizer ViewLocalizer
+@inject IHttpContextAccessor Accessor
+@inject SignInManager<AppUser> SignInManager
+@model List<CartItem>
+
+
+<a class="aa-cart-link" asp-controller="Cart" asp-action="Index">
+    <span class="fa fa-shopping-basket"></span>
+    <span class="aa-cart-title">@ViewLocalizer["Shopping Cart"]</span>
+    <span class="aa-cart-notify">@Model.Count</span>
+</a>
+<div class="aa-cartbox-summary">
+    <ul>
+        @foreach(CartItem ci in Model)
+        {
+            <li>
+                <a class="aa-cartbox-img" asp-action="Detail" asp-controller="Product" asp-route-productId="@ci.Product.Id"><img src="/img/@ci.Product.ImageUrl" alt="img"></a>
+                <div class="aa-cartbox-info">
+                    <h4><a asp-action="Detail" asp-controller="Product" asp-route-productId="@ci.Product.Id">@ci.Product.Name</a></h4>
+                    <p>@ci.Quantity x @Accessor.HttpContext.Session.GetString("symbol")@((int)((float)ci.Product.Price * float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))</p>
+                </div>
+                <a class="aa-remove-product" asp-action="Remove" asp-controller="Cart" asp-route-cartItemId="@ci.Id" asp-route-productId="@ci.ProductId"><span class="fa fa-times"></span></a>
+            </li>
+        }
+        <li>
+            <span class="aa-cartbox-total-title">
+                @ViewLocalizer["Total"]
+            </span>
+            <span class="aa-cartbox-total-price">
+                @Accessor.HttpContext.Session.GetString("symbol")@((int)((float)(Model.Sum(ci => ci.Product.Price * ci.Quantity)) * float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))
+            </span>
+        </li>
+    </ul>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <a class="aa-cartbox-checkout aa-primary-btn" asp-controller="Checkout" asp-action="Index">@ViewLocalizer["Checkout"]</a>
+    }
+    else
+    {
+        <a class="aa-cartbox-checkout aa-primary-btn" asp-controller="Account" asp-action="Index">@ViewLocalizer["Checkout"]</a>
+    }
+</div>

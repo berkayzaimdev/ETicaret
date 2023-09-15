@@ -1,0 +1,136 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.AspNetCore.Identity;
+@inject IViewLocalizer ViewLocalizer
+@model List<CartItem>
+@inject IHttpContextAccessor Accessor
+@inject SignInManager<AppUser> SignInManager
+
+@{
+    ViewData["Title"] = "Sepetim - bzShop";
+}
+
+
+<section id="aa-catg-head-banner">
+    <img src="/img/fashion/fashion-header-bg-8.jpg" alt="fashion img">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>@ViewLocalizer["Cart"]</h2>
+                <ol class="breadcrumb">
+                    <li><a asp-controller="Home" asp-action="Index">@ViewLocalizer["Home"]</a></li>
+                    <li class="active"><a asp-action="Index">@ViewLocalizer["Cart"]</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cart-view">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="cart-view-area">
+                    <div class="cart-view-table">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th>@ViewLocalizer["Product"]</th>
+                                        <th>@ViewLocalizer["Price"]</th>
+                                        <th>@ViewLocalizer["Quantity"]</th>
+                                        <th>@ViewLocalizer["Total"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (CartItem ci in Model)
+                                    {
+                                        <tr data-cartitemid="@ci.Id" data-cartid="@ci.CartId" data-productid="@ci.ProductId">
+                                            <td><a class="remove" asp-action="Remove" asp-route-cartItemId="@ci.Id" asp-route-productId="@ci.ProductId"><fa class="fa fa-close"></fa></a></td>
+                                            <td><a asp-action="Detail" asp-controller="Product" asp-route-productId="@ci.Product.Id"><img src="/img/@ci.Product.ImageUrl" alt="img"></a></td>
+                                            <td><a class="aa-cart-title" asp-action="Detail" asp-controller="Product" asp-route-productId="@ci.Product.Id">@ci.Product.Name</a></td>
+                                            <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)((float.Parse(Accessor.HttpContext.Session.GetString("multiplier")) * (ci.Product.Price))))</td>
+                                            <td>
+                                                @if (ci.Quantity > 1)
+                                                {
+                                                    <a href="javascript:;" data-change="-1" class="qtybtn ml-2 minus-btn"> <span class="f-icon-16"><i class="fa fa-minus"></i></span> </a>
+                                                }
+                                                <span>@ci.Quantity</span>
+                                                @if (ci.Quantity < ci.Product.Stock)
+                                                {
+                                                    <a href="javascript:;" data-change="1" class="qtybtn ml-2 plus-btn"> <span class="f-icon-16"><i class="fa fa-plus"></i></span> </a>
+                                                }
+                                            </td>
+                                            <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)((float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))*(ci.Product.Price * ci.Quantity))))</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="cart-view-total">
+                            <h4>@ViewLocalizer["Cart Totals"]</h4>
+                            <table class="aa-totals-table">
+                                <tbody>
+                                    <tr>
+                                        <th>@ViewLocalizer["Subtotal"]</th>
+                                        <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)(float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))*(Model.Sum(ci => ci.Product.Price * ci.Quantity))))</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@ViewLocalizer["TTotal"]</th>
+                                        <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)(float.Parse(Accessor.HttpContext.Session.GetString("multiplier")) * (Model.Sum(ci => (ci.Quantity * ci.Product.Price)) * ((float)(100 - Accessor.HttpContext.Session.GetInt32("coupon")) / 100))))</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <a asp-controller="Checkout" asp-action="Index" class="aa-cart-view-btn">@ViewLocalizer["Proced To Checkout"]</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Account" asp-action="Index" class="aa-cart-view-btn">@ViewLocalizer["Proced To Checkout"]</a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="aa-subscribe">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-subscribe-area">
+                    <h3>@ViewLocalizer["Subscribe our newsletter"] </h3>
+                    <form action="" class="aa-subscribe-form">
+                        <input type="email" name="" id="" placeholder="@ViewLocalizer["Enter your Email"]">
+                        <input type="submit" value="@ViewLocalizer["Subscribe"]">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () 
+    {
+        $('.qtybtn').on('click', function () {
+            const cartId = $(this).closest('tr').data('cartid');
+            const cartItemId = $(this).closest('tr').data('cartitemid');
+            const productId = $(this).closest('tr').data('productid');
+            const newQuantity = parseInt($(this).parent().find('span').text()) + parseInt($(this).data('change'));
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                type: 'POST',
+                data: { cartItemId: cartItemId, productId: productId, newQuantity, newQuantity },
+                success: function (result) {
+                    location.reload();
+                }
+            });
+        });
+    });
+</script>

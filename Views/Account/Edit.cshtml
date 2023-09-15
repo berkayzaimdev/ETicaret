@@ -1,0 +1,95 @@
+﻿@model EditViewModel
+@inject IHttpContextAccessor Accessor
+
+@{
+    ViewData["Title"] = "Profilim - bzShop";
+}
+
+<div class="aa-product-details-bottom">
+    <ul class="nav nav-tabs" id="myTab2">
+        <li><a href="#edit" data-toggle="tab">Bilgilerim</a></li>
+        <li><a href="#orders" data-toggle="tab">Siparişlerim</a></li>
+    </ul>
+    <div class="tab-content">
+        <!--  -->
+        <div class="tab-pane fade in active" id="edit">
+            <form method="post">
+                <table style="border-collapse:separate;border-spacing:0 8px">
+                    <tr class="inputbox">
+                        <td>
+                            <label>Kullanıcı Adı</label>
+                        </td>
+                        <td>
+                            <input name="username" value="@Model.username" asp-for="@Model.username" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                        </td>
+                    </tr>
+                    <tr class="inputbox">
+                        <td>
+                            <label>İsim</label>
+                        </td>
+                        <td>
+                            <input name="name" value="@Model.name" asp-for="@Model.name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                        </td>
+                    </tr>
+                    <tr class="inputbox">
+                        <td>
+                            <label>Soyisim</label>
+                        </td>
+                        <td>
+                            <input name="surname" value="@Model.surname" asp-for="@Model.surname" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+                        </td>
+                    </tr>
+                    <tr class="inputbox">
+                        <td colspan="2" style="text-align:center">
+                            <button type="submit">Kaydet</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="tab-pane fade " id="orders">
+            <div class="table-container">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <td>Ürün Listesi</td>
+                            <td>Adres Bilgisi</td>
+                            <td>Kart Bilgisi</td>
+                            <td>Kargo Firması</td>
+                            <td>Toplam Tutar</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(Order o in Model.Orders)
+                        {
+                            <tr>
+                                <td style="text-align:center;vertical-align:middle">
+                                    @foreach(OrderItem oi in o.OrderItems)
+                                    {
+                                        <span>@oi.Product.Name x @oi.Quantity</span><br />
+                                    }
+                                </td>
+                                <td style="text-align:center;vertical-align:middle">
+                                    <h5>@o.Address.Title</h5><br/>
+                                    <span>@o.Address.Name @o.Address.Surname</span><br/>
+                                    <span>@o.Address.Email</span><br/>
+                                    <span>@o.Address.Phone</span><br />
+                                    <span>@o.Address.FullAddress</span><br />
+                                    <span>@o.Address.PostalCode @o.Address.Appartment</span><br />
+                                    <span>@o.Address.District/@o.Address.City/@o.Address.Country</span><br />
+                                </td>
+                                <td style="text-align:center;vertical-align:middle">
+                                    <span>@o.Card.Owner</span><br />
+                                    <span>@o.Card.Number           @o.Card.SecurityCode</span><br />
+                                    <span>@o.Card.ExpirationMonth/@o.Card.ExpirationYear</span><br />
+                                </td>
+                                <td style="text-align:center;vertical-align:middle">@o.Shipper.Name</td>
+                                <td style="text-align:center;vertical-align:middle">@Accessor.HttpContext.Session.GetString("symbol")@((int)((float)o.Amount * float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))</td>
+                            </tr>                            
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

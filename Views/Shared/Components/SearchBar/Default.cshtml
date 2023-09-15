@@ -1,0 +1,10 @@
+﻿@model List<Product>
+
+<div class="search-results">
+    <ul>
+        @foreach (var p in Model)
+        {
+            <li><a asp-action="Detail" asp-controller="Product" asp-route-productId="@p.Id">@p.Name</a></li>
+        }
+    </ul>
+</div>

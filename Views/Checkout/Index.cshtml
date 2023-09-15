@@ -1,0 +1,377 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer ViewLocalizer
+@inject IHttpContextAccessor Accessor
+@inject SignInManager<AppUser> SignInManager
+@model CheckoutViewModel
+
+@{
+    ViewData["Title"] = ViewLocalizer["Checkout"].Value + " - bzShop";
+}
+
+
+<section id="aa-catg-head-banner">
+    <img src="/img/fashion/fashion-header-bg-8.jpg" alt="fashion img">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>@ViewLocalizer["Checkout"]</h2>
+                <ol class="breadcrumb">
+                    <li><a asp-controller="Home" asp-action="Index">@ViewLocalizer["Home"]</a></li>
+                    <li class="active"><a asp-action="Index">@ViewLocalizer["Checkout"]</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="checkout">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="checkout-area">
+                    <form method="post">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="checkout-left">
+                                    <div class="panel-group" id="accordion">
+                                        <div class="panel panel-default aa-checkout-coupon">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                                        @ViewLocalizer["Have a Coupon?"]
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseOne" class="panel-collapse collapse in">
+                                                <div class="panel-body">
+                                                    <input type="text" data-name="code" placeholder="@ViewLocalizer["Coupon Code"]" class="aa-coupon-code">
+                                                    <a href="javascript:;" data-name="coupon" class="aa-browse-btn">@ViewLocalizer["Apply Coupon"]</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default aa-checkout-billaddress">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                                        @ViewLocalizer["Billing Details"]
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseTwo" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <select id="addressSelect" asp-for="@Model.SelectedAddress">
+                                                                    <option value="0">Yeni Adres</option>
+                                                                    @foreach(Address a in Model.Addresses)
+                                                                    {
+                                                                        <option value="@a.Id">@a.Title</option>                                                                        
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="Title" id="addressTitle" asp-for="@Model.Address.Title">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Title"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="First Name" asp-for="@Model.Address.Name" id="addressName">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Name"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="Last Name" asp-for="@Model.Address.Surname" id="addressSurname">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Surname"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="email" placeholder="Email Address*" asp-for="@Model.Address.Email" id="addressEmail">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Email"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="tel" placeholder="Phone*" asp-for="@Model.Address.Phone" id="addressPhone">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Phone"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <textarea cols="8" rows="3" asp-for="@Model.Address.FullAddress" id="addressFullAddress"></textarea>
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.FullAddress"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <select asp-for="@Model.Address.Country" data-name="country" id="addressCountry">
+                                                                    <option value="0">@ViewLocalizer["Select Country"]</option>
+                                                                </select>
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Country"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="Appartment, Suite etc." value="test" asp-for="@Model.Address.Appartment" id="addressAppartment">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.Appartment"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="City / Town*" value="test" asp-for="@Model.Address.City" id="addressCity">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.City"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="District*" asp-for="@Model.Address.District" id="addressDistrict">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.District"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="Postcode / ZIP*" asp-for="@Model.Address.PostalCode" id="addressPostalCode">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Address.PostalCode"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default aa-checkout-billaddress">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+                                                        Kart Bilgileri
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseThree" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="Kart Sahibi" value="test" asp-for="@Model.Card.Owner">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Card.Owner"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input type="text" placeholder="CVV" value="111" asp-for="@Model.Card.SecurityCode">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Card.SecurityCode"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <input placeholder="Kart Numarası" value="1111111111111111" asp-for="@Model.Card.Number">
+                                                                <span class="label label-danger" asp-validation-for="@Model.Card.Number"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <select asp-for="@Model.Card.ExpirationMonth">
+                                                                    <option value="01">01</option>
+                                                                    <option value="02">02</option>
+                                                                    <option value="03">03</option>
+                                                                    <option value="04">04</option>
+                                                                    <option value="05">05</option>
+                                                                    <option value="06">06</option>
+                                                                    <option value="07">07</option>
+                                                                    <option value="08">08</option>
+                                                                    <option value="09">09</option>
+                                                                    <option value="10">10</option>
+                                                                    <option value="11">11</option>
+                                                                    <option value="12">12</option>
+                                                                </select>
+                                                                <span class="label label-danger" asp-validation-for="@Model.Card.ExpirationMonth"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="aa-checkout-single-bill">
+                                                                <select asp-for="@Model.Card.ExpirationYear">
+                                                                    <option value="2024">2024</option>
+                                                                    <option value="2025">2025</option>
+                                                                    <option value="2026">2026</option>
+                                                                    <option value="2027">2027</option>
+                                                                </select>
+                                                                <span class="label label-danger" asp-validation-for="@Model.Card.ExpirationYear"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default aa-checkout-coupon">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+                                                        @ViewLocalizer["Select Shipper"]
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="collapseFour" class="panel-collapse collapse">
+                                                <div class="panel-body">
+                                                    <select asp-for="@Model.ShipperId">
+                                                        @foreach (Shipper s in Model.Shippers)
+                                                        {
+                                                            <option value="@s.Id"> @s.Name </option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="checkout-right">
+                                    <h4>@ViewLocalizer["Order Summary"]</h4>
+                                    <div class="aa-order-summary-area">
+                                        <table class="table table-responsive">
+                                            <thead>
+                                                <tr>
+                                                    <th>@ViewLocalizer["Product"]</th>
+                                                    <th>@ViewLocalizer["Total"]</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (CartItem ci in Model.CartItems)
+                                                {
+                                                    <tr>
+                                                        <td>@ci.Product.Name <strong> x  @ci.Quantity</strong></td>
+                                                        <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)(float.Parse(Accessor.HttpContext.Session.GetString("multiplier")) * (ci.Product.Price * ci.Quantity)))</td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th>@ViewLocalizer["Subtotal"]</th>
+                                                    <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)((float.Parse(Accessor.HttpContext.Session.GetString("multiplier")) * (Model.CartItems.Sum(ci => (ci.Quantity * ci.Product.Price))))))</td>
+                                                </tr>
+                                                <tr>
+                                                    <th>@ViewLocalizer["TTotal"]</th>
+                                                    <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)(((float.Parse(Accessor.HttpContext.Session.GetString("multiplier")) * (Model.CartItems.Sum(ci => (ci.Quantity * ci.Product.Price)) * ((float)(100 - Accessor.HttpContext.Session.GetInt32("coupon"))))) / 100)))</td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                    <div class="aa-payment-method">
+                                        <input @((Model.CartItems.Count()==0)?"disabled":"") type="submit" value="@ViewLocalizer["Place Order"]" class="aa-browse-btn">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="@Model.Amount" value="@((int)((float.Parse(Accessor.HttpContext.Session.GetString("multiplier")))*(Model.CartItems.Sum(ci => (ci.Quantity * ci.Product.Price))*((float)(100-Accessor.HttpContext.Session.GetInt32("coupon"))/100))))">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        const countries = ["TR", "USA", "United Kingdom", "Deutschland"];
+        countries.forEach(function (country) {
+            $('[data-name="country"]').append($('<option>', {
+                value: country,
+                text: country
+            }));
+        });
+        $('[data-name="coupon"').on('click', function () {
+            const code = $('[data-name="code"').val();
+            $.ajax({
+                url: '/Checkout/ApplyCoupon',
+                type: 'POST',
+                data: { code: code },
+                success: function (result) {
+                    location.reload();
+                }
+            });
+        });
+        $('#addressSelect').on('change', function () {
+            const selectedValue = $(this).val();
+            const addressTitleInput = $('#addressTitle');
+            const addressDetailsInput = $('#addressDetails');
+            if (selectedValue === '0') {
+                $('#addressTitle').val('');
+                $('#addressName').val('');
+                $('#addressSurname').val('');
+                $('#addressEmail').val('');
+                $('#addressPhone').val('');
+                $('#addressFullAddress').val('');
+                $('#addressCountry').val('');
+                $('#addressAppartment').val('');
+                $('#addressCity').val('');
+                $('#addressDistrict').val('');
+                $('#addressPostalCode').val('');
+                $('#addressTitle').prop('disabled', false);
+                $('#addressName').prop('disabled', false);
+                $('#addressSurname').prop('disabled', false);
+                $('#addressEmail').prop('disabled', false);
+                $('#addressPhone').prop('disabled', false);
+                $('#addressFullAddress').prop('disabled', false);
+                $('#addressCountry').prop('disabled', false);
+                $('#addressAppartment').prop('disabled', false);
+                $('#addressCity').prop('disabled', false);
+                $('#addressDistrict').prop('disabled', false);
+                $('#addressPostalCode').prop('disabled', false);
+            } else {
+                $.ajax({
+                    url: '/Checkout/FindAddressById',
+                    type: 'POST',
+                    data: { addressId: selectedValue },
+                    success: function (result) {
+                        const obj = JSON.parse(result);
+                        $('#addressTitle').val(obj.Title);
+                        $('#addressName').val(obj.Name);
+                        $('#addressSurname').val(obj.Surname);
+                        $('#addressEmail').val(obj.Email);
+                        $('#addressPhone').val(obj.Phone);
+                        $('#addressFullAddress').val(obj.FullAddress);
+                        $('#addressCountry').val(obj.Country);
+                        $('#addressAppartment').val(obj.Appartment);
+                        $('#addressCity').val(obj.City);
+                        $('#addressDistrict').val(obj.District);
+                        $('#addressPostalCode').val(obj.PostalCode);
+                        $('#addressTitle').prop('disabled', true);
+                        $('#addressName').prop('disabled', true);
+                        $('#addressSurname').prop('disabled', true);
+                        $('#addressEmail').prop('disabled', true);
+                        $('#addressPhone').prop('disabled', true);
+                        $('#addressFullAddress').prop('disabled', true);
+                        $('#addressCountry').prop('disabled', true);
+                        $('#addressAppartment').prop('disabled', true);
+                        $('#addressCity').prop('disabled', true);
+                        $('#addressDistrict').prop('disabled', true);
+                        $('#addressPostalCode').prop('disabled', true);
+                    }
+                });
+            }
+        });
+    });
+</script>

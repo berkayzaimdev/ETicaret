@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer ViewLocalizer
+@inject IHttpContextAccessor Accessor
+@model List<Product>
+
+@{
+    ViewData["Title"] = "Favorilerim - bzShop";
+}
+
+
+<section id="aa-catg-head-banner">
+    <img src="/img/fashion/fashion-header-bg-8.jpg" alt="fashion img">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>@ViewLocalizer["Wishlist"]</h2>
+                <ol class="breadcrumb">
+                    <li><a asp-action="Index" asp-controller="Home">@ViewLocalizer["Home"]</a></li>
+                    <li class="active"><a asp-action="Index">@ViewLocalizer["Wishlist"]</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<section id="cart-view">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="cart-view-area">
+                    <div class="cart-view-table aa-wishlist-table">
+                        <form action="">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th>@ViewLocalizer["Product"]</th>
+                                            <th>@ViewLocalizer["Price"]</th>
+                                            <th>@ViewLocalizer["Stock Status"]</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (Product p in Model)
+                                        {
+                                            <tr>
+                                                <td><a class="remove" asp-action="Remove" asp-route-productId="@p.Id"><fa class="fa fa-close"></fa></a></td>
+                                                <td><a asp-action="Detail" asp-controller="Product" asp-route-productId="@p.Id"><img src="/img/man/polo-shirt-1.png" alt="img"></a></td>
+                                                <td><a asp-action="Detail" asp-controller="Product" asp-route-productId="@p.Id"  class="aa-cart-title">@p.Name</a></td>
+                                                <td>@Accessor.HttpContext.Session.GetString("symbol")@((int)(p.Price * float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))</td>
+                                                <td>@ViewLocalizer["Stock"]: @p.Stock</td>
+                                                <td><a asp-action="Add" asp-controller="Cart" asp-route-productId="@p.Id" class="aa-add-to-cart-btn">@ViewLocalizer["Add To Cart"]</a></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="aa-subscribe">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-subscribe-area">
+                    <h3>@ViewLocalizer["Subscribe our newsletter"] </h3>
+                    <form action="" class="aa-subscribe-form">
+                        <input type="email" name="" id="" placeholder="@ViewLocalizer["Enter your Email"]">
+                        <input type="submit" value="@ViewLocalizer["Subscribe"]">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,214 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims;
+@model Product
+@inject UserManager<AppUser> UserManager
+@inject SignInManager<AppUser> SignInManager
+@inject IViewLocalizer ViewLocalizer
+@inject IHttpContextAccessor Accessor
+
+@{
+    ViewData["Title"] = Model.Name+" - bzShop";
+}
+
+<section id="aa-catg-head-banner">
+    <img src="~/img/fashion/fashion-header-bg-8.jpg" alt="fashion img">
+    <div class="aa-catg-head-banner-area">
+        <div class="container">
+            <div class="aa-catg-head-banner-content">
+                <h2>@Model.Name</h2>
+                <ol class="breadcrumb">
+                    <li><a href="@Url.Action("Index","Home")">@ViewLocalizer["Home"]</a></li>
+                    <li><a href="@Url.Action("Index","Product",new{categoryId=Model.CategoryId,subcategoryId=Model.SubcategoryId})">@ViewLocalizer["Product"]</a></li>
+                    <li class="active">@Model.Name</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="aa-product-details">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-product-details-area">
+                    <div class="aa-product-details-content">
+                        <div class="row">
+                            <!-- Modal view slider -->
+                            <div class="col-md-5 col-sm-5 col-xs-12">
+                                <div class="aa-product-view-slider">
+                                    <div id="demo-1" class="simpleLens-gallery-container">
+                                        <div class="simpleLens-container">
+                                            <div class="simpleLens-big-image-container"><a data-lens-image="/img/view-slider/large/polo-shirt-1.png" class="simpleLens-lens-image"><img src="/img/view-slider/medium/polo-shirt-1.png" class="simpleLens-big-image"></a></div>
+                                        </div>
+                                        <div class="simpleLens-thumbnails-container">
+                                            <a data-big-image="/img/view-slider/medium/polo-shirt-1.png" data-lens-image="/img/view-slider/large/polo-shirt-1.png" class="simpleLens-thumbnail-wrapper" href="#">
+                                                <img src="/img/view-slider/thumbnail/polo-shirt-1.png">
+                                            </a>
+                                            <a data-big-image="/img/view-slider/medium/polo-shirt-3.png" data-lens-image="/img/view-slider/large/polo-shirt-3.png" class="simpleLens-thumbnail-wrapper" href="#">
+                                                <img src="/img/view-slider/thumbnail/polo-shirt-3.png">
+                                            </a>
+                                            <a data-big-image="/img/view-slider/medium/polo-shirt-4.png" data-lens-image="/img/view-slider/large/polo-shirt-4.png" class="simpleLens-thumbnail-wrapper" href="#">
+                                                <img src="/img/view-slider/thumbnail/polo-shirt-4.png">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Modal view content -->
+                            <div class="col-md-7 col-sm-7 col-xs-12">
+                                <div class="aa-product-view-content">
+                                    <h3>@Model.Name</h3>
+                                    <div class="aa-price-block">
+                                        <span class="aa-product-view-price">@Accessor.HttpContext.Session.GetString("symbol")@((int)(Model.Price*float.Parse(Accessor.HttpContext.Session.GetString("multiplier"))))</span>
+                                        <p class="aa-product-avilability">
+                                            @ViewLocalizer["Availability"]:
+                                            @if (Model.Stock > 0)
+                                            {
+                                                <span>@Model.Stock</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@ViewLocalizer["Out of Stock"]</span>
+                                            }
+                                        </p>
+                                    </div>
+                                    <p class="aa-product-description">
+                                        @Model.Description
+                                    </p>
+                                    <div class="aa-prod-quantity">
+                                        <p class="aa-prod-category">
+                                            Category: <a asp-action="Search" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a>
+                                            @if(Model.Subcategory!=null)
+                                            {
+                                                <span> - </span>
+                                               <a asp-action="Search" asp-route-categoryId="@Model.CategoryId" asp-route-subcategoryId="@Model.SubcategoryId">@Model.Subcategory.Name</a>
+                                            }
+                                        </p>
+                                    </div>
+                                    <div class="aa-prod-view-bottom">
+                                        <a class="aa-add-to-cart-btn" asp-action="Add" asp-controller="Cart" asp-route-productId="@Model.Id" asp-route-userId="2">@ViewLocalizer["Add To Cart"]</a>
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            <a class="aa-add-to-cart-btn" asp-action="Add" asp-controller="Wishlist" asp-route-userId="@User.FindFirstValue(ClaimTypes.NameIdentifier)" asp-route-productId="@Model.Id">@ViewLocalizer["Add To Wishlist"]</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="aa-add-to-cart-btn">@ViewLocalizer["Add To Wishlist"]</a>
+                                        }
+                                        <a class="aa-add-to-cart-btn" href="#">@ViewLocalizer["Compare"]</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="aa-product-details-bottom">
+                        <ul class="nav nav-tabs" id="myTab2">
+                            <li><a href="#description" data-toggle="tab">@ViewLocalizer["Description"]</a></li>
+                            <li><a href="#review" data-toggle="tab">@ViewLocalizer["Reviews"]</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="description">
+                                <p>
+                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quod, culpa!
+                                    Lorem ipsum dolor sit amet.
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolor qui eius esse!
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam, modi!
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Illum, iusto earum voluptates autem esse molestiae ipsam, atque quam amet similique ducimus aliquid voluptate perferendis, distinctio!
+
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis ea, voluptas! Aliquam facere quas cumque rerum dolore impedit, dicta ducimus repellat dignissimos, fugiat, minima quaerat necessitatibus? Optio adipisci ab, obcaecati, porro unde accusantium facilis repudiandae.
+                                </p>
+                            </div>
+                            <div class="tab-pane fade " id="review">
+                                <div class="aa-product-review-area">
+                                    <h4>@Model.Comments.Count() @ViewLocalizer["Review"]</h4>
+                                    <ul class="aa-review-nav">
+                                        @foreach (Comment c in Model.Comments)
+                                        {
+                                            <li>
+                                                <div class="media">
+                                                    <div class="media-left">
+                                                        <a href="#">
+                                                            <img class="media-object" src="/img/testimonial-img-3.jpg" alt="girl image">
+                                                        </a>
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <h4 class="media-heading"><strong>@UserManager.Users.SingleOrDefault(u=> u.Id == c.UserId).Name @UserManager.Users.SingleOrDefault(u=> u.Id == c.UserId).Surname</strong> - <span>@c.CommentTime.ToString()</span></h4>
+                                                        <div class="aa-product-rating">
+                                                            @for (int i = 0; i < c.Rating; i++)
+                                                            {
+                                                                <span class="fa fa-star"></span>
+                                                            }
+                                                            @for (int i = 0; i < 5 - c.Rating; i++)
+                                                            {
+                                                                <span class="fa fa-star-o"></span>
+                                                            }
+                                                        </div>
+                                                        <p>@c.Detail</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <h4>@ViewLocalizer["Add a review"]</h4>
+                                    <div class="aa-your-rating">
+                                        <p>@ViewLocalizer["Your Rating"]</p>
+                                        <a class="star" data-value="1"><span class="fa fa-star-o"></span></a>
+                                        <a class="star" data-value="2"><span class="fa fa-star-o"></span></a>
+                                        <a class="star" data-value="3"><span class="fa fa-star-o"></span></a>
+                                        <a class="star" data-value="4"><span class="fa fa-star-o"></span></a>
+                                        <a class="star" data-value="5"><span class="fa fa-star-o"></span></a>
+                                    </div>
+                                    <!-- review form -->
+                                    <form method="post" asp-action="AddComment" class="aa-review-form">
+                                        <div class="form-group">
+                                            <label for="message">@ViewLocalizer["Your Review"]</label>
+                                            <textarea class="form-control" rows="3" name="detail" id="message" @(!SignInManager.IsSignedIn(User) ? "disabled" : "")></textarea>
+                                        </div>
+                                        <input type="hidden" name="rating" id="rating" value="0">
+                                        @if (SignInManager.IsSignedIn(User))
+                                        {
+                                            <input type="hidden" name="userId" id="userId" value="@User.FindFirstValue(ClaimTypes.NameIdentifier)" />
+                                        }
+                                        <input type="hidden" name="productId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-default aa-review-submit" @(!SignInManager.IsSignedIn(User) ? "disabled" : "")>@ViewLocalizer["Submit"]</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var maxRating = 5;
+        var currentRating = 0;
+
+        $('.star').on('click', function () {
+            var selectedRating = $(this).data('value');
+
+            // Set the rating to the selected star
+            $('.star').each(function () {
+                var starValue = $(this).data('value');
+                if (starValue <= selectedRating) {
+                    $(this).find('span').removeClass('fa-star-o').addClass('fa-star');
+                } else {
+                    $(this).find('span').removeClass('fa-star').addClass('fa-star-o');
+                }
+            });
+
+            currentRating = selectedRating;
+            $('#rating').val(currentRating);
+        });
+    });
+</script>

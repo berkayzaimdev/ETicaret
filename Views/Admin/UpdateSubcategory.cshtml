@@ -1,0 +1,24 @@
+﻿@model AdminPanelViewModel
+
+<form method="post" asp-action="UpdateSubcategory">
+    <table style="border-collapse:separate;border-spacing:0 8px">
+        <input type="hidden" name="Id" value="@Model.Subcategory.Id" />
+        <tr class="inputbox">
+            <td>
+                <label>Alt Kategori Adı</label>
+            </td>
+            <td>
+                <input name="Name" value="@Model.Subcategory.Name" class="inp-f0" type="text" style="margin-left: 5vw;width: 10vw; " />
+            </td>
+        </tr>
+        <tr class="inputbox">
+            <td colspan="2" style="text-align:center">
+                <button type="submit">Kaydet</button>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+</script>

@@ -1,0 +1,54 @@
+﻿<section id="aa-myaccount">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="aa-myaccount-area">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="aa-myaccount-login">
+                                <h4>Login</h4>
+                                <form method="post" class="aa-login-form" asp-action="Login">
+                                    <label for="">Username</label>
+                                    <input name="Username" type="text">
+                                    <label for="">Password</label>
+                                    <input name="Password" type="password">
+                                    <button type="submit" class="aa-browse-btn">Login</button>
+                                    <label class="rememberme" for="rememberme"><input type="checkbox" id="rememberme"> Remember me </label>
+                                    <!--<p class="aa-lost-password"><a href="#">Lost your password?</a></p>-->
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="aa-myaccount-register">
+                                <h4>Register</h4>
+                                <form method="post" class="aa-login-form" asp-action="Register">
+                                    <label for="">Name</label>
+                                    <input name="Name" type="text">
+                                    <label for="">Surname</label>
+                                    <input name="Surname" type="text">
+                                    <label for="">Email address</label>
+                                    <input name="Email" type="text">
+                                    <label for="">Gender</label>
+                                    <br />
+                                    <select name="Gender">
+                                        <option>Seçiniz</option>
+                                        <option value="Female">Kadın</option>
+                                        <option value="Male">Erkek</option>
+                                    </select>
+                                    <br/>
+                                    <label for="">Username</label>
+                                    <input name="Username" type="text">
+                                    <label for="">Password</label>
+                                    <input name="Password" type="password">
+                                    <label for="">Confirm password</label>
+                                    <input name="" type="password">
+                                    <button type="submit" class="aa-browse-btn">Register</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
